@@ -1,0 +1,6 @@
+applicationType: default
+defaultPackage: com.github.hc747
+testFramework: junit
+sourceLanguage: kotlin
+buildTool: gradle_kotlin
+features: [annotation-api, app-name, aws-v2-sdk, cache-caffeine, config4k, elasticsearch, github-workflow-docker-registry, gradle, graphql, hibernate-validator, http-client, jdbc-hikari, junit, kafka, kafka-streams, kotlin, kotlin-application, kotlin-extension-functions, liquibase, log4j2, management, micrometer, micrometer-prometheus, mysql, netty-server, r2dbc, readme, rxjava3, rxjava3-http-client, security, security-annotations, security-jwt, shade, testcontainers, views-handlebars]
