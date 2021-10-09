@@ -1,4 +1,4 @@
-package com.github.hc747
+package com
 
 import io.micronaut.configuration.kafka.streams.ConfiguredStreamBuilder
 import io.micronaut.context.annotation.Factory
@@ -8,6 +8,7 @@ import jakarta.inject.Singleton
 
 @Factory
 class ExampleFactory {
+
     @Singleton
     @Named("example")
     fun exampleStream(builder: ConfiguredStreamBuilder): KStream<String?, String?>? {

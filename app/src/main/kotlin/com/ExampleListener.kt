@@ -1,4 +1,4 @@
-package com.github.hc747
+package com
 
 import io.micronaut.configuration.kafka.annotation.KafkaListener
 import io.micronaut.configuration.kafka.annotation.Topic
