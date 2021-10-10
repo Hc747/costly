@@ -1,6 +1,5 @@
 package com
 
-import com.ExampleController.Companion.ENDPOINT
 import com.costly.cache.adapter.CacheAdapter
 import com.costly.cache.middleware.CacheMiddleware
 import com.costly.client.SuspendableHttpClient
@@ -68,7 +67,7 @@ class ExampleController(@Inject val http: SuspendableHttpClient) {
 
             val builder: Caffeine<String, String> = Caffeine.newBuilder().expireAfterWrite(Duration.ofSeconds(5L)) as Caffeine<String, String>
 
-            return CacheAdapter.build(middleware, loader).augment(builder)
+            return CacheAdapter.build(middleware, loader).adapt(builder)
         }
     }
 
