@@ -40,7 +40,7 @@ abstract class JedisMiddleware<K, V>(
         return value(output)
     }
 
-    override fun put(map: Map<K, V>) {
+    override fun put(map: Map<out K, V>) {
         if (map.isEmpty()) return
         val inputs = ArrayList<String>(map.size * 2)
         for (entry in map.entries) {
@@ -61,6 +61,8 @@ abstract class JedisMiddleware<K, V>(
         val inputs = keys.map { key -> key.toKey() }.toTypedArray()
         client { jedis -> jedis.del(*inputs) }
     }
+
+    override fun isBulkOptimised(): Boolean = true
 
     private fun K.toKey(): String = keys.encode(this)
 

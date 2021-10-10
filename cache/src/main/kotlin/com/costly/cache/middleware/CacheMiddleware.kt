@@ -23,4 +23,6 @@ interface CacheMiddleware<K, V> {
             remove(key)
         }
     }
+
+    fun isBulkOptimised(): Boolean = false
 }

@@ -19,9 +19,12 @@ class MiddlewareAwareCacheLoader<K, V>(
         return value
     }
 
-    override fun loadAll(keys: Set<K>): Map<K, V> {
+    override fun loadAll(keys: Set<K>): Map<out K, V> {
+        //TODO: determine if this is the desired behaviour
+        if (!middleware.isBulkOptimised()) return super.loadAll(keys)
+
         val results = HashMap<K, V>()
-        val ordered = keys.toList()
+        val ordered = keys.toList() // convert to list as results are ordinal, therefore, iteration order has to be deterministic and consistent
         val hits = middleware.get(ordered)
         val pending = HashSet<K>()
 
@@ -32,21 +35,17 @@ class MiddlewareAwareCacheLoader<K, V>(
                 results[key] = value
         }
 
-        if (pending.isEmpty()) {
-            return results
-        }
-
-        val lookups = bulk(pending)
-
-        if (lookups.isNotEmpty()) {
-            middleware.put(lookups)
-            results.putAll(lookups)
+        if (pending.isEmpty()) return results
+        val loaded = load(pending)
+        if (loaded.isNotEmpty()) {
+            middleware.put(loaded)
+            results.putAll(loaded)
         }
 
         return results
     }
 
-    private fun bulk(keys: Set<K>): Map<out K, V> = try {
+    private fun load(keys: Set<K>): Map<out K, V> = try {
         fastpath(keys)
     } catch (e: UnsupportedOperationException) {
         slowpath(keys)
