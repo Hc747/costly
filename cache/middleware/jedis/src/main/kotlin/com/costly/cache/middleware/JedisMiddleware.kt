@@ -10,11 +10,19 @@ abstract class JedisMiddleware<K, V>(
     private val values: CacheCodec<String, V>
 ) : CacheMiddleware<K, V> {
 
-    private class Singleton<K, V>(private val jedis: Jedis, keys: CacheCodec<String, K>, values: CacheCodec<String, V>) : JedisMiddleware<K, V>(keys, values) {
+    private class Unpooled<K, V>(
+        private val jedis: Jedis,
+        keys: CacheCodec<String, K>,
+        values: CacheCodec<String, V>
+    ) : JedisMiddleware<K, V>(keys, values) {
         override fun <T> client(action: (Jedis) -> T): T = action(jedis)
     }
 
-    private class Pool<K, V>(private val pool: JedisPool, keys: CacheCodec<String, K>, values: CacheCodec<String, V>) : JedisMiddleware<K, V>(keys, values) {
+    private class Pooled<K, V>(
+        private val pool: JedisPool,
+        keys: CacheCodec<String, K>,
+        values: CacheCodec<String, V>
+    ) : JedisMiddleware<K, V>(keys, values) {
         override fun <T> client(action: (Jedis) -> T): T = pool.resource.use(action)
     }
 
@@ -74,12 +82,8 @@ abstract class JedisMiddleware<K, V>(
 
     companion object {
 
-        fun<K, V> cache(jedis: Jedis, keys: CacheCodec<String, K>, values: CacheCodec<String, V>): JedisMiddleware<K, V> {
-            return Singleton(jedis, keys, values)
-        }
+        fun<K, V> cache(jedis: Jedis, keys: CacheCodec<String, K>, values: CacheCodec<String, V>): JedisMiddleware<K, V> = Unpooled(jedis, keys, values)
 
-        fun<K, V> cache(pool: JedisPool, keys: CacheCodec<String, K>, values: CacheCodec<String, V>): JedisMiddleware<K, V> {
-            return Pool(pool, keys, values)
-        }
+        fun<K, V> cache(pool: JedisPool, keys: CacheCodec<String, K>, values: CacheCodec<String, V>): JedisMiddleware<K, V> = Pooled(pool, keys, values)
     }
 }
